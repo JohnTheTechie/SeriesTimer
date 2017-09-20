@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">SeriesTimer</string>
+    <string name="settingCycleName">Name</string>
+    <string name="settingCycleCount">No. of cycles</string>
+    <string name="settingSubCycle">Timer</string>
+
+    <!-- strings for the fragment fragmen_time_item -->
+
+    <string name="timerItemMinuteLabel">minute(s)</string>
+    <string name="timerItemSecondsLabel">seconds</string>
+    <string name="defaultTime">00</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

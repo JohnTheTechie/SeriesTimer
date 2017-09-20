@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="textSizeTextLabel">25sp</dimen>
+    <dimen name="textSizeTextLabelSmall">22sp</dimen>
+
+    <!--fragment_time_item dimensions-->
+    <dimen name="timeItemTextDimension">22sp</dimen>
+
+</resources>
