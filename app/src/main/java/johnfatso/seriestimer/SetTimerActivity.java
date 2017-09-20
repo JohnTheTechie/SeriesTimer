@@ -37,20 +37,20 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
         if(savedInstanceState!=null){
             ((EditText)findViewById(R.id.cycleName)).setText(savedInstanceState.getString(TIMER_NAME));
             ((TextView)findViewById(R.id.cycleCountText)).setText(savedInstanceState.getString(TIMER_CYCLE_COUNT));
-            try{
+            //try{
                 byte[] byteArray=savedInstanceState.getByteArray(TIMER_ITEM_STORAGE);
                 Log.v("JJT","byte array recieved");
-                long[] longArray=convertByteArrayToLongArray(byteArray);//issue is there in this function
+                long[] longArray=ConversionManager.convertByteArrayToLongArray(byteArray);//issue is there in this function
                 Log.v("JJT","longArrayProcess success");
                 for(long milliseconds : longArray){
                     Log.v("JJT","looping");
                     createAndPushTimeItemToLinearLayout(milliseconds);
                 }
-                Log.v("JJT","bloc ok");
+                Log.v("JJT","bloc ok");/*
             }catch (Exception e){
                 Log.v("JJT","excepted in byteArray processing");
             }
-
+*/
         }
     }
 
@@ -72,7 +72,7 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
     protected void onSaveInstanceState(Bundle savedInstance){
         savedInstance.putString(TIMER_NAME, ((EditText)findViewById(R.id.cycleName)).getText().toString());
         savedInstance.putString(TIMER_CYCLE_COUNT,((TextView)findViewById(R.id.cycleCountText)).getText().toString());
-        savedInstance.putByteArray(TIMER_ITEM_STORAGE,convertLongArrayToByteArray(convertTimeItemFragmentArrayToLongArray(fragmentArrayList)));
+        savedInstance.putByteArray(TIMER_ITEM_STORAGE,ConversionManager.convertLongArrayToByteArray(convertTimeItemFragmentArrayToLongArray(fragmentArrayList)));
         Log.v("JJT","saveInstance");
     }
 
@@ -144,7 +144,7 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
         a counter is also is incremented to maintain the order of the items in the linear view
         */
         TimeItemFragment fragment=TimeItemFragment.newInstance(getString(R.string.settingSubCycle));
-        fragment.setTimerTime(milliseconds);
+        //fragment.setTimerTime(milliseconds);
         timerCountTracker++;
         fragmentArrayList.add(fragment);
 
@@ -195,19 +195,7 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
         return timeItemValueArray;
     }
 
-    private byte[] convertLongArrayToByteArray(long[] longArray){
-        ByteBuffer byteBuffer=ByteBuffer.allocate(longArray.length*8);
-        LongBuffer longBuffer=byteBuffer.asLongBuffer();
-        longBuffer.put(longArray);
-        return byteBuffer.array();
-    }
 
-    private long[] convertByteArrayToLongArray(byte[] byteArray){
-        LongBuffer longBuffer=LongBuffer.allocate(byteArray.length/8);
-        ByteBuffer byteBuffer=ByteBuffer.wrap(byteArray);
-        longBuffer=byteBuffer.asLongBuffer();
-        return  longBuffer.array();
-    }
 
 
     public void onFragmentInteraction(){

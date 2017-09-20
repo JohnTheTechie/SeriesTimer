@@ -23,8 +23,11 @@ public class TimeItemFragment extends Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_TIMER_LABEL = "param1";
+    private static final String ARG_TIMER_MILLISECONDS = "param2";
+
 
     private String timerLabel;
+    private int minutes, seconds;
     private View localView;
     private OnFragmentInteractionListener mListener;
 
@@ -38,11 +41,21 @@ public class TimeItemFragment extends Fragment {
      * @param timerLabel the string to be set as the label of the timer.
      * @return A new instance of fragment TimeItemFragment.
      */
-    // TODO: Rename and change types and number of parameters
+
     public static TimeItemFragment newInstance(String timerLabel) {
         TimeItemFragment fragment = new TimeItemFragment();
         Bundle args = new Bundle();
         args.putString(ARG_TIMER_LABEL, timerLabel);
+        args.putLong(ARG_TIMER_MILLISECONDS,0);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static TimeItemFragment newInstance(String timerLabel, long milliseconds) {
+        TimeItemFragment fragment = new TimeItemFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_TIMER_LABEL, timerLabel);
+        args.putLong(ARG_TIMER_MILLISECONDS,milliseconds);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,6 +65,8 @@ public class TimeItemFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             timerLabel = getArguments().getString(ARG_TIMER_LABEL);
+            this.minutes=(int)(getArguments().getLong(ARG_TIMER_MILLISECONDS)/60000);
+            this.seconds=(int)((getArguments().getLong(ARG_TIMER_MILLISECONDS)/1000))%60;
         }
     }
 
@@ -61,7 +76,11 @@ public class TimeItemFragment extends Fragment {
         // Inflate the layout for this fragment
         localView=inflater.inflate(R.layout.fragment_time_item, container, false);
         TextView labelTextView= localView.findViewById(R.id.timerLabel);
+        EditText minuteView=localView.findViewById(R.id.minuteValue);
+        EditText secondView=localView.findViewById(R.id.secondValue);
         labelTextView.setText(this.timerLabel);
+        minuteView.setText(""+this.minutes);
+        secondView.setText(""+this.seconds);
         return localView;
     }
 
