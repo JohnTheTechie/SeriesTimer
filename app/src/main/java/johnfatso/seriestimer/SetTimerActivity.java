@@ -1,6 +1,7 @@
 package johnfatso.seriestimer;
 
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
@@ -10,8 +11,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-import java.nio.ByteBuffer;
-import java.nio.LongBuffer;
 import java.util.ArrayList;
 import android.util.Log;
 import android.widget.TextView;
@@ -51,6 +50,22 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
                 Log.v("JJT","excepted in byteArray processing");
             }
 */
+        }
+        else {
+            Intent intent=getIntent();
+            ((EditText)findViewById(R.id.cycleName)).setText(intent.getStringExtra(DatabaseHelper.DB_CYCLE_NAME));
+            ((TextView)findViewById(R.id.cycleCountText)).setText(""+intent.getIntExtra(DatabaseHelper.DB_CYCLE_COUNT,0));
+
+            byte[] byteArray=intent.getByteArrayExtra(DatabaseHelper.DB_CYCLE_DESCRIPTION);
+            Log.v("JJT","byte array recieved");
+            long[] longArray=ConversionManager.convertByteArrayToLongArray(byteArray);//issue is there in this function
+            Log.v("JJT","longArrayProcess success");
+            for(long milliseconds : longArray){
+                Log.v("JJT","looping");
+                createAndPushTimeItemToLinearLayout(milliseconds);
+            }
+            Log.v("JJT","bloc ok");
+
         }
     }
 
@@ -143,7 +158,7 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
         the fragment should be pushed into the arrayList for management
         a counter is also is incremented to maintain the order of the items in the linear view
         */
-        TimeItemFragment fragment=TimeItemFragment.newInstance(getString(R.string.settingSubCycle));
+        TimeItemFragment fragment=TimeItemFragment.newInstance(getString(R.string.settingSubCycle),milliseconds);
         //fragment.setTimerTime(milliseconds);
         timerCountTracker++;
         fragmentArrayList.add(fragment);
@@ -166,8 +181,8 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
         The fragment instance is pushed into the frame
          */
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.commit();
         transaction.add(fragmentFrame.getId(), fragment);
+        transaction.commit();
 
         return fragmentFrame;
     }

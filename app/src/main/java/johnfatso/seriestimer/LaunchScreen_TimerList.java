@@ -15,10 +15,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class LaunchScreen_TimerList extends AppCompatActivity {
+public class LaunchScreen_TimerList extends AppCompatActivity  {
 
     private SQLiteDatabase db;
     private Cursor cursor;
@@ -33,7 +35,7 @@ public class LaunchScreen_TimerList extends AppCompatActivity {
         try{
             SQLiteOpenHelper databaseHelper=new DatabaseHelper(this);
             db=databaseHelper.getWritableDatabase();
-           // timerListServer=new TimerListServer(databaseHelper);
+            timerListServer=new TimerListServer(databaseHelper);
             /*
             TimeHolder timeHolder=new TimeHolder();
             timeHolder.setNameOfTheTimer("testTimer");
@@ -51,6 +53,12 @@ public class LaunchScreen_TimerList extends AppCompatActivity {
 
 
             listView.setAdapter(listAdapter);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                    callTimerSettingActivity(timerListServer.getTimer(position));
+                }
+            });
         }catch (SQLiteException e){
             Toast.makeText(this, "Databse missing",Toast.LENGTH_SHORT).show();
 
@@ -89,9 +97,19 @@ public class LaunchScreen_TimerList extends AppCompatActivity {
     }
 
     private void callTimerSettingActivity(String cycleName){
-        Intent intent=new Intent();
+        Intent intent=new Intent(this, SetTimerActivity.class);
         intent.putExtra(DatabaseHelper.DB_CYCLE_NAME, cycleName);
         startActivity(intent);
-
     }
+
+    private void callTimerSettingActivity(TimeHolder timeHolder){
+        Intent intent=new Intent(this, SetTimerActivity.class);
+        intent.putExtra(DatabaseHelper.DB_CYCLE_NAME, timeHolder.getNameOfTheTimer());
+        intent.putExtra(DatabaseHelper.DB_CYCLE_COUNT,timeHolder.getNumberOfCycles());
+        intent.putExtra(DatabaseHelper.DB_CYCLE_DESCRIPTION,timeHolder.getTimeItemAsByteArray());
+        startActivity(intent);
+    }
+
+
+
 }
