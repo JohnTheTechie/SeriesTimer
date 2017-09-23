@@ -1,13 +1,18 @@
 package johnfatso.seriestimer;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -75,14 +80,43 @@ public class TimeItemFragment extends Fragment {
         // Inflate the layout for this fragment
         localView=inflater.inflate(R.layout.fragment_time_item, container, false);
         TextView labelTextView= localView.findViewById(R.id.timerLabel);
-        EditText minuteView=localView.findViewById(R.id.minuteValue);
-        EditText secondView=localView.findViewById(R.id.secondValue);
+        final EditText minuteView=localView.findViewById(R.id.minuteValue);
+        final EditText secondView=localView.findViewById(R.id.secondValue);
         labelTextView.setText(this.timerLabel);
         minuteView.setText(""+this.minutes);
         secondView.setText(""+this.seconds);
+
+        minuteView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if((!hasFocus)&&((view.getId()==R.id.minuteValue))){
+                    Log.v("JJT","FocusChange caught minute "+hasFocus);
+                    String minuteString=((EditText)localView.findViewById(R.id.minuteValue)).getText().toString();
+                    minutes=Integer.parseInt(minuteString);
+                }
+                else if(hasFocus){
+                    //mListener.onViewFocused(getActivity(),minuteView);
+                }
+            }
+        });
+
+        secondView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if((!hasFocus)&&((view.getId()==R.id.secondValue))){
+                    String secondString=((EditText)localView.findViewById(R.id.secondValue)).getText().toString();
+                    seconds=Integer.parseInt(secondString);
+                    checkSecondValue();
+                    Log.v("JJT","FocusChange caught second "+hasFocus+" "+seconds);
+
+                }
+                else if(hasFocus){
+                   // mListener.onViewFocused(getActivity(),secondView);
+                }
+            }
+        });
         return localView;
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -94,6 +128,15 @@ public class TimeItemFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+
+
+    private void checkSecondValue(){
+        if(seconds>=60){
+            seconds=59;
+            ((EditText)localView.findViewById(R.id.secondValue)).setText(String.format(Locale.getDefault(),"%d",seconds));
+        }
     }
 
     /**
@@ -129,6 +172,7 @@ public class TimeItemFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
+        void onViewFocused(Activity activity, View view);
         void onFragmentInteraction();
     }
 

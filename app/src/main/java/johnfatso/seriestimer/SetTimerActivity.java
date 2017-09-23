@@ -1,5 +1,6 @@
 package johnfatso.seriestimer;
 
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -7,7 +8,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
+import android.view.inputmethod.InputMethodManager;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -266,7 +267,14 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
 
 
     public void onFragmentInteraction(){
+        Log.v("JJT","Fragment listener caught an event");
 
+    }
+
+    public void onViewFocused(Activity activity, View view){
+        Log.v("JJT","Focus listener caught an event");
+        InputMethodManager inputMethodManager =(InputMethodManager)activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.showSoftInput(view,InputMethodManager.SHOW_IMPLICIT);
     }
 
 }
