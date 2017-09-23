@@ -88,8 +88,10 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:background="@android:drawable/arrow_up_float"
+                        android:elevation="8dp"
                         tools:layout_editor_absoluteX="351dp"
-                        tools:layout_editor_absoluteY="483dp" />
+                        tools:layout_editor_absoluteY="483dp"
+                        android:onClick=""/>
 
                     <TextView
                         android:id="@+id/cycleCountText"
@@ -109,6 +111,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:background="@android:drawable/arrow_down_float"
+                        android:elevation="8dp"
                         tools:layout_editor_absoluteX="139dp"
                         tools:layout_editor_absoluteY="153dp" />
                 </LinearLayout>

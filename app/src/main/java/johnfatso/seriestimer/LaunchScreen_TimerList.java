@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.util.Log;
 
 public class LaunchScreen_TimerList extends AppCompatActivity  {
 
@@ -60,7 +61,7 @@ public class LaunchScreen_TimerList extends AppCompatActivity  {
                 }
             });
         }catch (SQLiteException e){
-            Toast.makeText(this, "Databse missing",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Database missing",Toast.LENGTH_SHORT).show();
 
 
         }
@@ -77,7 +78,7 @@ public class LaunchScreen_TimerList extends AppCompatActivity  {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.createNewItem:
-                callTimerSettingActivity();
+                callTimerSettingActivity(new TimeHolder());
                 break;
         }
 
@@ -107,9 +108,10 @@ public class LaunchScreen_TimerList extends AppCompatActivity  {
         intent.putExtra(DatabaseHelper.DB_CYCLE_NAME, timeHolder.getNameOfTheTimer());
         intent.putExtra(DatabaseHelper.DB_CYCLE_COUNT,timeHolder.getNumberOfCycles());
         intent.putExtra(DatabaseHelper.DB_CYCLE_DESCRIPTION,timeHolder.getTimeItemAsByteArray());
+        /*for(TimeHolder.TimeItem item: timeHolder.getTimeItem()){
+
+            Log.v("JJT","minute "+item.minute+" seconds "+item.second);
+        }*/
         startActivity(intent);
     }
-
-
-
 }

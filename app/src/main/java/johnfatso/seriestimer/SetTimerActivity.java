@@ -12,6 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import java.util.ArrayList;
+import java.util.Locale;
+
 import android.util.Log;
 import android.widget.TextView;
 
@@ -33,15 +35,16 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
         Log.v("JJT","create");
         this.timerCountTracker=0;
         setContentView(R.layout.activity_set_timer);
+        //this block would be activated if the activity is starting back after onStop or other callbacks
         if(savedInstanceState!=null){
             ((EditText)findViewById(R.id.cycleName)).setText(savedInstanceState.getString(TIMER_NAME));
             ((TextView)findViewById(R.id.cycleCountText)).setText(savedInstanceState.getString(TIMER_CYCLE_COUNT));
             //try{
                 byte[] byteArray=savedInstanceState.getByteArray(TIMER_ITEM_STORAGE);
                 Log.v("JJT","byte array recieved");
-                long[] longArray=ConversionManager.convertByteArrayToLongArray(byteArray);//issue is there in this function
-                Log.v("JJT","longArrayProcess success");
-                for(long milliseconds : longArray){
+                int[] intArray=ConversionManager.convertByteArrayToIntArray(byteArray);//issue is there in this function
+                Log.v("JJT","intArrayProcess success");
+                for(int milliseconds : intArray){
                     Log.v("JJT","looping");
                     createAndPushTimeItemToLinearLayout(milliseconds);
                 }
@@ -51,16 +54,17 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
             }
 */
         }
+        //this block should be activated when the activity is called using an intent
         else {
             Intent intent=getIntent();
             ((EditText)findViewById(R.id.cycleName)).setText(intent.getStringExtra(DatabaseHelper.DB_CYCLE_NAME));
-            ((TextView)findViewById(R.id.cycleCountText)).setText(""+intent.getIntExtra(DatabaseHelper.DB_CYCLE_COUNT,0));
+            ((TextView)findViewById(R.id.cycleCountText)).setText(String.format(Locale.getDefault(),"%d",intent.getIntExtra(DatabaseHelper.DB_CYCLE_COUNT,0)));
 
             byte[] byteArray=intent.getByteArrayExtra(DatabaseHelper.DB_CYCLE_DESCRIPTION);
             Log.v("JJT","byte array recieved");
-            long[] longArray=ConversionManager.convertByteArrayToLongArray(byteArray);//issue is there in this function
-            Log.v("JJT","longArrayProcess success");
-            for(long milliseconds : longArray){
+            int[] intArray=ConversionManager.convertByteArrayToIntArray(byteArray);
+            Log.v("JJT","intArrayProcess success");
+            for(int milliseconds : intArray){
                 Log.v("JJT","looping");
                 createAndPushTimeItemToLinearLayout(milliseconds);
             }
@@ -87,7 +91,7 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
     protected void onSaveInstanceState(Bundle savedInstance){
         savedInstance.putString(TIMER_NAME, ((EditText)findViewById(R.id.cycleName)).getText().toString());
         savedInstance.putString(TIMER_CYCLE_COUNT,((TextView)findViewById(R.id.cycleCountText)).getText().toString());
-        savedInstance.putByteArray(TIMER_ITEM_STORAGE,ConversionManager.convertLongArrayToByteArray(convertTimeItemFragmentArrayToLongArray(fragmentArrayList)));
+        savedInstance.putByteArray(TIMER_ITEM_STORAGE,ConversionManager.convertIntArrayToByteArray(convertTimeItemFragmentArrayToIntArray(fragmentArrayList)));
         Log.v("JJT","saveInstance");
     }
 
@@ -129,8 +133,8 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
         scrollView.pageScroll(View.FOCUS_DOWN);
     }
 
-    private void createAndPushTimeItemToLinearLayout(long milliseconds){
-        TimeItemFragment fragment=createTimeItemFragment(milliseconds);
+    private void createAndPushTimeItemToLinearLayout(int totalSeconds){
+        TimeItemFragment fragment=createTimeItemFragment(totalSeconds);
         FrameLayout fragmentFrame = createTimeItemFrame(fragment);
         pushFrameToTimeItemLinearLayout(fragmentFrame);
 
@@ -152,13 +156,13 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
         return fragment;
     }
 
-    private TimeItemFragment createTimeItemFragment(long milliseconds){
+    private TimeItemFragment createTimeItemFragment(int totalSeconds){
         /*
         creation of the new instance of the fragment item
         the fragment should be pushed into the arrayList for management
         a counter is also is incremented to maintain the order of the items in the linear view
         */
-        TimeItemFragment fragment=TimeItemFragment.newInstance(getString(R.string.settingSubCycle),milliseconds);
+        TimeItemFragment fragment=TimeItemFragment.newInstance(getString(R.string.settingSubCycle),totalSeconds);
         //fragment.setTimerTime(milliseconds);
         timerCountTracker++;
         fragmentArrayList.add(fragment);
@@ -202,8 +206,8 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
         layout.addView(fragmentFrame,this.timerCountTracker-1);
     }
 
-    private long[] convertTimeItemFragmentArrayToLongArray(ArrayList<TimeItemFragment> arrayList){
-        long[] timeItemValueArray=new long[arrayList.size()];
+    private int[] convertTimeItemFragmentArrayToIntArray(ArrayList<TimeItemFragment> arrayList){
+        int[] timeItemValueArray=new int[arrayList.size()];
         for(int i=0;i<arrayList.size();i++){
             timeItemValueArray[i]=arrayList.get(i).getTimerTime();
         }

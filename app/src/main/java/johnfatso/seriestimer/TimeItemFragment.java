@@ -22,7 +22,7 @@ public class TimeItemFragment extends Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_TIMER_LABEL = "param1";
-    private static final String ARG_TIMER_MILLISECONDS = "param2";
+    private static final String ARG_TIMER_SECONDS = "param2";
 
 
     private String timerLabel;
@@ -45,16 +45,16 @@ public class TimeItemFragment extends Fragment {
         TimeItemFragment fragment = new TimeItemFragment();
         Bundle args = new Bundle();
         args.putString(ARG_TIMER_LABEL, timerLabel);
-        args.putLong(ARG_TIMER_MILLISECONDS,0);
+        args.putInt(ARG_TIMER_SECONDS,0);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public static TimeItemFragment newInstance(String timerLabel, long milliseconds) {
+    public static TimeItemFragment newInstance(String timerLabel, int numberOfSeconds) {
         TimeItemFragment fragment = new TimeItemFragment();
         Bundle args = new Bundle();
         args.putString(ARG_TIMER_LABEL, timerLabel);
-        args.putLong(ARG_TIMER_MILLISECONDS,milliseconds);
+        args.putInt(ARG_TIMER_SECONDS,numberOfSeconds);
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,8 +64,8 @@ public class TimeItemFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             timerLabel = getArguments().getString(ARG_TIMER_LABEL);
-            this.minutes=(int)(getArguments().getLong(ARG_TIMER_MILLISECONDS)/60000);
-            this.seconds=(int)((getArguments().getLong(ARG_TIMER_MILLISECONDS)/1000))%60;
+            this.minutes=getArguments().getInt(ARG_TIMER_SECONDS)/60;
+            this.seconds=getArguments().getInt(ARG_TIMER_SECONDS)%60;
         }
     }
 
@@ -101,18 +101,18 @@ public class TimeItemFragment extends Fragment {
      * the following functions are going to be used for fetching the time stamps
      */
 
-    public long getTimerTime(){
-        long timerTime;
+    public int getTimerTime(){
+        int timerTime;
         String minuteValue=((EditText)localView.findViewById(R.id.minuteValue)).getText().toString();
         String secondValue=((EditText)localView.findViewById(R.id.secondValue)).getText().toString();
-        timerTime=(Integer.parseInt(minuteValue)*60+Integer.parseInt(secondValue))*1000;
+        timerTime=(Integer.parseInt(minuteValue)*60+Integer.parseInt(secondValue));
         return timerTime;
     }
 
-    public void setTimerTime(long milliseconds){
+    public void setTimerTime(int numberOfSeconds){
         int minute,seconds;
-        seconds=(int)(milliseconds/1000)%60;
-        minute=(int)(milliseconds/1000)/60;
+        seconds=numberOfSeconds%60;
+        minute=numberOfSeconds/60;
         ((EditText)localView.findViewById(R.id.minuteValue)).setText(""+minute);
         ((EditText)localView.findViewById(R.id.secondValue)).setText(""+seconds);
     }

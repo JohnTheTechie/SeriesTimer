@@ -6,8 +6,8 @@
 
     <!-- strings for the fragment fragmen_time_item -->
 
-    <string name="timerItemMinuteLabel">minute(s)</string>
-    <string name="timerItemSecondsLabel">seconds</string>
+    <string name="timerItemMinuteLabel">min</string>
+    <string name="timerItemSecondsLabel">sec</string>
     <string name="defaultTime">00</string>
 
 

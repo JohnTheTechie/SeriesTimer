@@ -9,22 +9,23 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 /**
+ * Database helper
  * Created by janakiraman on 03-09-2017.
  */
 
-public class DatabaseHelper extends SQLiteOpenHelper{
+class DatabaseHelper extends SQLiteOpenHelper{
 
     //timer table details
-    public static final String DB_NAME="trialDB";
-    public static final int DB_VERSION=1;
+    static final String DB_NAME="trialDB";
+    private static final int DB_VERSION=1;
 
     //Timer cycle details Column name definitions
-    public static final String DB_CYCLE_NAME="cycleName";
-    public static final String DB_CYCLE_COUNT="cycleCount";
-    public static final String DB_CYCLE_DESCRIPTION="cycleDescription";
+    static final String DB_CYCLE_NAME="cycleName";
+    static final String DB_CYCLE_COUNT="cycleCount";
+    static final String DB_CYCLE_DESCRIPTION="cycleDescription";
 
     //initialize the database helper. The function shall check the device for the existing DB and takes decision whether to call onCreate or onUpgrade
-    public DatabaseHelper(Context context){
+    DatabaseHelper(Context context){
         super(context, DB_NAME, null,DB_VERSION);
     }
 
@@ -32,9 +33,9 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db){
         db.execSQL("CREATE TABLE "+DB_NAME+" ( _id INTEGER PRIMARY KEY AUTOINCREMENT, "+DB_CYCLE_NAME+" TEXT, "+DB_CYCLE_COUNT+" INTEGER, "+DB_CYCLE_DESCRIPTION+" BLOB);");
-        insertDataToDB(db, "Default1", 4, new int[] {4,0,1,0});
-        insertDataToDB(db, "Default2", 3, new int[] {6,0,2,0});
-        insertDataToDB(db, "Default3", 1, new int[] {0,10,0,10});
+        insertDataToDB(db, "Default1", 4, new int[] {4,10,1,23});
+        insertDataToDB(db, "Default2", 3, new int[] {6,59,2,12});
+        insertDataToDB(db, "Default3", 1, new int[] {1,10,0,10});
     }
 
     //this function is called when there is already a old version of the DB is available in the device and need to be upgraded
@@ -66,11 +67,13 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     }
 
     public static byte[] convertIntArrayToByteArray(int[] cycleDescriptionArray){
-        ByteBuffer byteBuffer=ByteBuffer.allocate(cycleDescriptionArray.length*4);
+        /*ByteBuffer byteBuffer=ByteBuffer.allocate(cycleDescriptionArray.length*4);
         IntBuffer intBuffer=byteBuffer.asIntBuffer();
         intBuffer.put(cycleDescriptionArray);
 
-        return byteBuffer.array();
+        return byteBuffer.array();*/
+
+        return ConversionManager.convertIntArrayToByteArray(cycleDescriptionArray);
     }
     
     private ContentValues createContentValuesforCycleDescription(int[] cycleDescription){
