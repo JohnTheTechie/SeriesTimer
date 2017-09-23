@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:isScrollContainer="false"
 
 
     tools:context="johnfatso.seriestimer.SetTimerActivity">
@@ -23,7 +24,8 @@
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
+        android:layout_marginEnd="8dp"
+        android:weightSum="1">
 
         <LinearLayout
             android:id="@+id/cycleNameCountFrame"
@@ -91,7 +93,7 @@
                         android:elevation="8dp"
                         tools:layout_editor_absoluteX="351dp"
                         tools:layout_editor_absoluteY="483dp"
-                        android:onClick=""/>
+                        android:onClick="onCycleCountIncrement"/>
 
                     <TextView
                         android:id="@+id/cycleCountText"
@@ -112,6 +114,7 @@
                         android:layout_gravity="center"
                         android:background="@android:drawable/arrow_down_float"
                         android:elevation="8dp"
+                        android:onClick="onCycleCountDecrement"
                         tools:layout_editor_absoluteX="139dp"
                         tools:layout_editor_absoluteY="153dp" />
                 </LinearLayout>
@@ -123,7 +126,8 @@
         <ScrollView
             android:id="@+id/timerItemScrollView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            >
 
 
             <LinearLayout

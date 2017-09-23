@@ -4,6 +4,9 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import android.os.Bundle;
 import android.widget.EditText;
@@ -27,6 +30,7 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
     private final String TIMER_CYCLE_COUNT="TIMER_CYCLE_COUNT";
 
     int timerCountTracker;
+    int cycleCount;
     ArrayList<TimeItemFragment> fragmentArrayList=new ArrayList<>();
 
     @Override
@@ -38,7 +42,9 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
         //this block would be activated if the activity is starting back after onStop or other callbacks
         if(savedInstanceState!=null){
             ((EditText)findViewById(R.id.cycleName)).setText(savedInstanceState.getString(TIMER_NAME));
-            ((TextView)findViewById(R.id.cycleCountText)).setText(savedInstanceState.getString(TIMER_CYCLE_COUNT));
+            cycleCount=savedInstanceState.getInt(TIMER_CYCLE_COUNT);
+            ((TextView)findViewById(R.id.cycleCountText)).setText(cycleCount);
+
             //try{
                 byte[] byteArray=savedInstanceState.getByteArray(TIMER_ITEM_STORAGE);
                 Log.v("JJT","byte array recieved");
@@ -59,9 +65,10 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
             Intent intent=getIntent();
             ((EditText)findViewById(R.id.cycleName)).setText(intent.getStringExtra(DatabaseHelper.DB_CYCLE_NAME));
             ((TextView)findViewById(R.id.cycleCountText)).setText(String.format(Locale.getDefault(),"%d",intent.getIntExtra(DatabaseHelper.DB_CYCLE_COUNT,0)));
+            cycleCount=intent.getIntExtra(DatabaseHelper.DB_CYCLE_COUNT,0);
 
             byte[] byteArray=intent.getByteArrayExtra(DatabaseHelper.DB_CYCLE_DESCRIPTION);
-            Log.v("JJT","byte array recieved");
+            Log.v("JJT","byte array received");
             int[] intArray=ConversionManager.convertByteArrayToIntArray(byteArray);
             Log.v("JJT","intArrayProcess success");
             for(int milliseconds : intArray){
@@ -90,7 +97,7 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
     @Override
     protected void onSaveInstanceState(Bundle savedInstance){
         savedInstance.putString(TIMER_NAME, ((EditText)findViewById(R.id.cycleName)).getText().toString());
-        savedInstance.putString(TIMER_CYCLE_COUNT,((TextView)findViewById(R.id.cycleCountText)).getText().toString());
+        savedInstance.putInt(TIMER_CYCLE_COUNT,cycleCount);
         savedInstance.putByteArray(TIMER_ITEM_STORAGE,ConversionManager.convertIntArrayToByteArray(convertTimeItemFragmentArrayToIntArray(fragmentArrayList)));
         Log.v("JJT","saveInstance");
     }
@@ -113,6 +120,27 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
         super.onDestroy();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater menuInflater=getMenuInflater();
+        menuInflater.inflate(R.menu.set_timer_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.saveToDatabase:
+                Log.v("JJT","save to DATABASE triggered");
+                break;
+
+            case R.id.startTimer:
+                Log.v("JJT","start timer triggered");
+                break;
+        }
+        return true;
+    }
+
     /**
      * function attached to the add timer button
      * the function should be able to create a new fragment, insert the same into the list view
@@ -121,6 +149,30 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
 
     public void onAddTimerItemButtonPressed(View view){
         createAndPushTimeItemToLinearLayout();
+
+        ScrollView scrollView=(ScrollView)findViewById(R.id.timerItemScrollView);
+        scrollView.post(new Runnable() {
+
+            @Override
+            public void run() {
+                ((ScrollView)findViewById(R.id.timerItemScrollView)).fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
+
+        /*ScrollView scrollView=(ScrollView)findViewById(R.id.timerItemScrollView);
+        scrollView.pageScroll(ScrollView.FOCUS_DOWN);*/
+    }
+
+    public void onCycleCountIncrement(View view){
+        cycleCount++;
+        ((TextView)findViewById(R.id.cycleCountText)).setText(String.format(Locale.getDefault(),"%d",cycleCount));
+    }
+
+    public void onCycleCountDecrement(View view){
+        if(cycleCount!=1){
+            cycleCount--;
+        }
+        ((TextView)findViewById(R.id.cycleCountText)).setText(String.format(Locale.getDefault(),"%d",cycleCount));
     }
 
     private void createAndPushTimeItemToLinearLayout(){
@@ -130,17 +182,13 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
 
 
         ScrollView scrollView=(ScrollView)findViewById(R.id.timerItemScrollView);
-        scrollView.pageScroll(View.FOCUS_DOWN);
+        scrollView.fullScroll(View.FOCUS_DOWN);
     }
 
     private void createAndPushTimeItemToLinearLayout(int totalSeconds){
         TimeItemFragment fragment=createTimeItemFragment(totalSeconds);
         FrameLayout fragmentFrame = createTimeItemFrame(fragment);
         pushFrameToTimeItemLinearLayout(fragmentFrame);
-
-
-        ScrollView scrollView=(ScrollView)findViewById(R.id.timerItemScrollView);
-        scrollView.pageScroll(View.FOCUS_DOWN);
     }
 
     private TimeItemFragment createTimeItemFragment(){

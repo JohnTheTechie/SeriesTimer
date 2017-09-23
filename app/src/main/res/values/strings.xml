@@ -10,7 +10,7 @@
     <string name="timerItemSecondsLabel">sec</string>
     <string name="defaultTime">00</string>
 
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Set timee menu -->
+    <string name="saveToDB">Save</string>
+    <string name="startTimer">Start</string>
 </resources>
