@@ -44,7 +44,7 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
         if(savedInstanceState!=null){
             ((EditText)findViewById(R.id.cycleName)).setText(savedInstanceState.getString(TIMER_NAME));
             cycleCount=savedInstanceState.getInt(TIMER_CYCLE_COUNT);
-            ((TextView)findViewById(R.id.cycleCountText)).setText(cycleCount);
+            ((TextView)findViewById(R.id.cycleCountText)).setText(""+cycleCount);
 
             //try{
                 byte[] byteArray=savedInstanceState.getByteArray(TIMER_ITEM_STORAGE);
