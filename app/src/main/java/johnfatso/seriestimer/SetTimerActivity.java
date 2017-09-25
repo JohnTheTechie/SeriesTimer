@@ -136,6 +136,10 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
                 break;
 
             case R.id.startTimer:
+                Intent intent=new Intent(this,TimerScreen.class);
+                intent.putExtra(DatabaseHelper.DB_CYCLE_COUNT,cycleCount);
+                intent.putExtra(DatabaseHelper.DB_CYCLE_DESCRIPTION,convertTimeItemFragmentArrayToIntArray(fragmentArrayList));
+                startActivity(intent);
                 Log.v("JJT","start timer triggered");
                 break;
         }
