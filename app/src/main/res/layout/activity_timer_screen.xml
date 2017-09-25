@@ -73,6 +73,7 @@
                 android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:visibility="visible"
+                android:onClick="onPauseButtonPressed"
                 android:layout_marginBottom="30dp"
                 android:layout_marginTop="30dp"
                 app:srcCompat="@drawable/pause_black" />
@@ -83,6 +84,7 @@
                 android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:visibility="invisible"
+                android:onClick="onPlayButtonPressed"
                 android:layout_marginBottom="30dp"
                 android:layout_marginTop="30dp"
                 app:srcCompat="@drawable/play_black" />
