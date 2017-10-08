@@ -124,7 +124,6 @@ public class TimerScreen extends AppCompatActivity {
         isRunning=false;
     }
 
-
     /**
      * function shall be called when the Play button is pressed
      * Play button shall be set invisible
