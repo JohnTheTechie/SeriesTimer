@@ -1,6 +1,8 @@
 package johnfatso.seriestimer;
 
 import android.content.Intent;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +17,7 @@ import java.util.Locale;
 public class TimerScreen extends AppCompatActivity {
 
     private final String TIMER_ITEM_STORAGE="TIMER_ITEM_STORAGE";
+    private final String TIMER_ITEM_COMPLETE_STORAGE="TIMER_ITEM_COMPLETE_STORAGE";
     //private final String TIMER_NAME="TIMER_NAME";
     private final String TIMER_CYCLE_COUNT="TIMER_CYCLE_COUNT";
     private final String TIMER_CURRENT_CYCLE="TIMER_CURRENT_CYCLE";
@@ -24,18 +27,24 @@ public class TimerScreen extends AppCompatActivity {
 
     private int cycleCount;                                                                         //the total number of cycles
     private ArrayList<Integer> secondsArrayList;                                                    //an array list to store the timer items in seconds
+    private ArrayList<Integer> completeCycleDescription;
 
     private int currentCycle;                                                                       //the cycle currently being run
     private int currentTimer;
     private int remainingTimeInSeconds;                                                             //the remaining time in seconds
     private boolean isRunning;                                                                      //to store if the timer is running or not
+    private boolean runFlag;
+    private Handler handler;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer_screen);
+
+
         secondsArrayList=new ArrayList<>();
+        completeCycleDescription=new ArrayList<>();
 
         //this block would be activated if the activity is starting back after onStop or other callbacks
         if(savedInstanceState!=null){
@@ -44,14 +53,17 @@ public class TimerScreen extends AppCompatActivity {
             currentTimer=savedInstanceState.getInt(TIMER_CURRENT_TIMER);
             remainingTimeInSeconds=savedInstanceState.getInt(TIMER_REMAINING_TIME);
             isRunning=savedInstanceState.getBoolean(TIMER_IS_RUNNING);
-            secondsArrayList(savedInstanceState.getIntArray(TIMER_ITEM_STORAGE));
+            intListToArrayList(savedInstanceState.getIntArray(TIMER_ITEM_STORAGE),secondsArrayList);
+            intListToArrayList(savedInstanceState.getIntArray(TIMER_ITEM_COMPLETE_STORAGE),completeCycleDescription);
+            //runFlag
+
         }
         //this block should be activated when the activity is called using an intent
         else {
             Intent intent=getIntent();
             cycleCount=intent.getIntExtra(DatabaseHelper.DB_CYCLE_COUNT,0);
-            secondsArrayList(intent.getIntArrayExtra(DatabaseHelper.DB_CYCLE_DESCRIPTION));
-            currentCycle=1;
+            intListToArrayList(intent.getIntArrayExtra(DatabaseHelper.DB_CYCLE_DESCRIPTION),secondsArrayList);
+            createCompleteTimerDescription(cycleCount,secondsArrayList);
             currentCycle=1;
             remainingTimeInSeconds=secondsArrayList.get(0);
             isRunning=true;
@@ -88,7 +100,9 @@ public class TimerScreen extends AppCompatActivity {
         savedInstanceState.putInt(TIMER_CYCLE_COUNT,cycleCount);
         savedInstanceState.putInt(TIMER_REMAINING_TIME,remainingTimeInSeconds);
         savedInstanceState.putBoolean(TIMER_IS_RUNNING,isRunning);
-        savedInstanceState.putIntArray(TIMER_ITEM_STORAGE,secondsArrayList());
+        savedInstanceState.putIntArray(TIMER_ITEM_STORAGE,arrayListToIntList(secondsArrayList));
+        savedInstanceState.putIntArray(TIMER_ITEM_COMPLETE_STORAGE,arrayListToIntList(completeCycleDescription));
+        //savedInstanceState.put
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -97,27 +111,79 @@ public class TimerScreen extends AppCompatActivity {
         super.onDestroy();
     }
 
+    /**
+     * function to be called when the Pause button is pressed
+     * The pause button is set invisible
+     * the play button shall be set visible
+     * @param view
+     */
+
     public void onPauseButtonPressed(View view){
         ((ImageView)(findViewById(R.id.pauseButton))).setVisibility(View.INVISIBLE);
         ((ImageView)(findViewById(R.id.playButton))).setVisibility(View.VISIBLE);
+        isRunning=false;
     }
 
+    /**
+     * function shall be called when the Play button is pressed
+     * Play button shall be set invisible
+     * Pause button shall be set visible
+     * @param view
+     */
     public void onPlayButtonPressed(View view){
         ((ImageView)(findViewById(R.id.pauseButton))).setVisibility(View.VISIBLE);
         ((ImageView)(findViewById(R.id.playButton))).setVisibility(View.INVISIBLE);
+        isRunning=true;
     }
 
-    private int[] secondsArrayList(){
-        int[] list=new int[secondsArrayList.size()];
-        for(Integer integer:secondsArrayList){
-            list[secondsArrayList.indexOf(integer)]=integer;
+    /**
+     * the function  consolidates the timer seconds into an int array and returns the same
+     * @return int list of timer seconds
+     */
+    private int[] arrayListToIntList(ArrayList<Integer> arrayList){
+        int[] list=new int[arrayList.size()];
+        for(Integer integer:arrayList){
+            list[arrayList.indexOf(integer)]=integer;
         }
         return list;
     }
 
-    private void secondsArrayList(int[] list){
+    /**
+     * reads the int list of seconds and stores the same into an array list
+     * @param list int array
+     */
+    private void intListToArrayList(int[] list, ArrayList<Integer> arrayList){
         for(int integer: list){
-            secondsArrayList.add(integer);
+            arrayList.add(integer);
         }
     }
+
+    private void createCompleteTimerDescription(int cycleCount, ArrayList<Integer> arrayList){
+        for (int i=0;i<cycleCount;i++){
+            for(Integer integer: arrayList){
+                completeCycleDescription.add(integer);
+            }
+        }
+    }
+
+    /*private void startTimer(final int timerSeconds){
+        final Handler handler=new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                new CountDownTimer(timerSeconds*1000,1000) {
+                    @Override
+                    public void onTick(long l) {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+
+                    }
+                };
+            }
+        });
+
+    }*/
 }

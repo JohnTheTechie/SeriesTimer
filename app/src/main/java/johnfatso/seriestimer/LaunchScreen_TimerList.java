@@ -33,6 +33,7 @@ public class LaunchScreen_TimerList extends AppCompatActivity  {
         setContentView(R.layout.activity_launch_screen__timer_list);
         ListView listView=(ListView) findViewById(R.id.timerList);
 
+
         try{
             SQLiteOpenHelper databaseHelper=new DatabaseHelper(this);
             db=databaseHelper.getWritableDatabase();

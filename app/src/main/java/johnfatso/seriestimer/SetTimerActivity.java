@@ -38,6 +38,8 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.v("JJT","create");
+
+
         this.timerCountTracker=0;
         setContentView(R.layout.activity_set_timer);
         //this block would be activated if the activity is starting back after onStop or other callbacks
