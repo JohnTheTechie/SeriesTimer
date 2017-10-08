@@ -37,9 +37,6 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.v("JJT","create");
-
-
         this.timerCountTracker=0;
         setContentView(R.layout.activity_set_timer);
         //this block would be activated if the activity is starting back after onStop or other callbacks
@@ -47,21 +44,11 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
             ((EditText)findViewById(R.id.cycleName)).setText(savedInstanceState.getString(TIMER_NAME));
             cycleCount=savedInstanceState.getInt(TIMER_CYCLE_COUNT);
             ((TextView)findViewById(R.id.cycleCountText)).setText(""+cycleCount);
-
-            //try{
-                byte[] byteArray=savedInstanceState.getByteArray(TIMER_ITEM_STORAGE);
-                Log.v("JJT","byte array recieved");
-                int[] intArray=ConversionManager.convertByteArrayToIntArray(byteArray);//issue is there in this function
-                Log.v("JJT","intArrayProcess success");
-                for(int milliseconds : intArray){
-                    Log.v("JJT","looping");
-                    createAndPushTimeItemToLinearLayout(milliseconds);
-                }
-                Log.v("JJT","bloc ok");/*
-            }catch (Exception e){
-                Log.v("JJT","excepted in byteArray processing");
+            byte[] byteArray=savedInstanceState.getByteArray(TIMER_ITEM_STORAGE);
+            int[] intArray=ConversionManager.convertByteArrayToIntArray(byteArray);//issue is there in this function
+            for(int milliseconds : intArray){
+                createAndPushTimeItemToLinearLayout(milliseconds);
             }
-*/
         }
         //this block should be activated when the activity is called using an intent
         else {
@@ -69,17 +56,11 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
             ((EditText)findViewById(R.id.cycleName)).setText(intent.getStringExtra(DatabaseHelper.DB_CYCLE_NAME));
             ((TextView)findViewById(R.id.cycleCountText)).setText(String.format(Locale.getDefault(),"%d",intent.getIntExtra(DatabaseHelper.DB_CYCLE_COUNT,0)));
             cycleCount=intent.getIntExtra(DatabaseHelper.DB_CYCLE_COUNT,0);
-
             byte[] byteArray=intent.getByteArrayExtra(DatabaseHelper.DB_CYCLE_DESCRIPTION);
-            Log.v("JJT","byte array received");
             int[] intArray=ConversionManager.convertByteArrayToIntArray(byteArray);
-            Log.v("JJT","intArrayProcess success");
             for(int milliseconds : intArray){
-                Log.v("JJT","looping");
                 createAndPushTimeItemToLinearLayout(milliseconds);
             }
-            Log.v("JJT","bloc ok");
-
         }
     }
 

@@ -32,10 +32,18 @@ class StatusControl {
     static final int APP_NONEXISANT=0;
 
     /**
+     * the followin items are to be used for tracking the existence of the service
+     */
+    static final int SERVICE_NONEXISTANT=0;
+    static final int SERVICE_STARTED_UNBOUND=1;
+    static final int SERVICE_BOUND=2;
+
+    /**
      * the following are to be exposed to the app, so that the current status could be followed and tracked
      */
     static int isAppActive=APP_NONEXISANT;
     static int currentScreen=SCREEN_NONEXISTANT;
     static int statusOfTheCurrentScreen=STATUS_NONEXISTANT;
+    static int statusOfTheService=SERVICE_NONEXISTANT;
 
 }
