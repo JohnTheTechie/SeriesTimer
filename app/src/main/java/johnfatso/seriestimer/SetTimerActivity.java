@@ -120,6 +120,7 @@ public class SetTimerActivity extends AppCompatActivity implements TimeItemFragm
 
             case R.id.startTimer:
                 Intent intent=new Intent(this,TimerScreen.class);
+                intent.putExtra(DatabaseHelper.DB_CYCLE_NAME,((EditText)findViewById(R.id.cycleName)).getText().toString());
                 intent.putExtra(DatabaseHelper.DB_CYCLE_COUNT,cycleCount);
                 intent.putExtra(DatabaseHelper.DB_CYCLE_DESCRIPTION,convertTimeItemFragmentArrayToIntArray(fragmentArrayList));
                 startActivity(intent);
