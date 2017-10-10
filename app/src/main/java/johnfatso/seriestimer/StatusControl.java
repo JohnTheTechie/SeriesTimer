@@ -46,4 +46,5 @@ class StatusControl {
     static int statusOfTheCurrentScreen=STATUS_NONEXISTANT;
     static int statusOfTheService=SERVICE_NONEXISTANT;
 
+
 }
