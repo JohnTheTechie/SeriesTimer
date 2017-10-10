@@ -1,12 +1,14 @@
 package johnfatso.seriestimer;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class TimerService extends Service {
@@ -26,6 +28,7 @@ public class TimerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startID){
         Toast.makeText(this, "timer begun", Toast.LENGTH_SHORT).show();
+        //TextView textView=
         //Todo:implement code to start the timer
         return START_STICKY;
     }

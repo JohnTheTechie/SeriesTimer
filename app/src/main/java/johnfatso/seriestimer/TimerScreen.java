@@ -1,8 +1,12 @@
 package johnfatso.seriestimer;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,14 +20,14 @@ import java.util.Locale;
 
 public class TimerScreen extends AppCompatActivity {
 
-    private final String TIMER_ITEM_STORAGE="TIMER_ITEM_STORAGE";
+   /* private final String TIMER_ITEM_STORAGE="TIMER_ITEM_STORAGE";
     private final String TIMER_ITEM_COMPLETE_STORAGE="TIMER_ITEM_COMPLETE_STORAGE";
     //private final String TIMER_NAME="TIMER_NAME";
     private final String TIMER_CYCLE_COUNT="TIMER_CYCLE_COUNT";
     private final String TIMER_CURRENT_CYCLE="TIMER_CURRENT_CYCLE";
     private final String TIMER_CURRENT_TIMER="TIMER_CURRENT_TIMER";
     private final String TIMER_REMAINING_TIME="TIMER_REMAINING_TIME";
-    private final String TIMER_IS_RUNNING="TIMER_IS_RUNNING";
+    private final String TIMER_IS_RUNNING="TIMER_IS_RUNNING";*/
 
     private int cycleCount;                                                                         //the total number of cycles
     private ArrayList<Integer> secondsArrayList;                                                    //an array list to store the timer items in seconds
@@ -35,6 +39,24 @@ public class TimerScreen extends AppCompatActivity {
     private boolean isRunning;                                                                      //to store if the timer is running or not
     private boolean runFlag;
     private Handler handler;
+
+    private boolean isBound;
+    private TimerService timerService;
+    private ServiceConnection serviceConnection=new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            TimerService.LocalBinder binder=(TimerService.LocalBinder) service;
+            isBound=true;
+            timerService=binder.getService();
+            Log.v("JJT","binding done");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isBound=false;
+            Log.v("JJT","binding undone");
+        }
+    };
 
 
     @Override
@@ -48,13 +70,13 @@ public class TimerScreen extends AppCompatActivity {
 
         //this block would be activated if the activity is starting back after onStop or other callbacks
         if(savedInstanceState!=null){
-            cycleCount=savedInstanceState.getInt(TIMER_CYCLE_COUNT);
+            /*cycleCount=savedInstanceState.getInt(TIMER_CYCLE_COUNT);
             currentCycle=savedInstanceState.getInt(TIMER_CURRENT_CYCLE);
             currentTimer=savedInstanceState.getInt(TIMER_CURRENT_TIMER);
             remainingTimeInSeconds=savedInstanceState.getInt(TIMER_REMAINING_TIME);
             isRunning=savedInstanceState.getBoolean(TIMER_IS_RUNNING);
             intListToArrayList(savedInstanceState.getIntArray(TIMER_ITEM_STORAGE),secondsArrayList);
-            intListToArrayList(savedInstanceState.getIntArray(TIMER_ITEM_COMPLETE_STORAGE),completeCycleDescription);
+            intListToArrayList(savedInstanceState.getIntArray(TIMER_ITEM_COMPLETE_STORAGE),completeCycleDescription);*/
             //runFlag
 
         }
@@ -68,6 +90,9 @@ public class TimerScreen extends AppCompatActivity {
             remainingTimeInSeconds=secondsArrayList.get(0);
             isRunning=true;
 
+            Intent serviceIntent=new Intent(this, TimerService.class);
+            startService(serviceIntent);
+            bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
         }
 
     }
@@ -95,13 +120,13 @@ public class TimerScreen extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState){
-        savedInstanceState.putInt(TIMER_CURRENT_CYCLE,currentCycle);
+        /*savedInstanceState.putInt(TIMER_CURRENT_CYCLE,currentCycle);
         savedInstanceState.putInt(TIMER_CURRENT_TIMER,currentTimer);
         savedInstanceState.putInt(TIMER_CYCLE_COUNT,cycleCount);
         savedInstanceState.putInt(TIMER_REMAINING_TIME,remainingTimeInSeconds);
         savedInstanceState.putBoolean(TIMER_IS_RUNNING,isRunning);
         savedInstanceState.putIntArray(TIMER_ITEM_STORAGE,arrayListToIntList(secondsArrayList));
-        savedInstanceState.putIntArray(TIMER_ITEM_COMPLETE_STORAGE,arrayListToIntList(completeCycleDescription));
+        savedInstanceState.putIntArray(TIMER_ITEM_COMPLETE_STORAGE,arrayListToIntList(completeCycleDescription));*/
         //savedInstanceState.put
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -166,24 +191,7 @@ public class TimerScreen extends AppCompatActivity {
         }
     }
 
-    /*private void startTimer(final int timerSeconds){
-        final Handler handler=new Handler();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                new CountDownTimer(timerSeconds*1000,1000) {
-                    @Override
-                    public void onTick(long l) {
 
-                    }
 
-                    @Override
-                    public void onFinish() {
 
-                    }
-                };
-            }
-        });
-
-    }*/
 }
